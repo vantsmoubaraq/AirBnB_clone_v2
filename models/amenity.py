@@ -1,14 +1,7 @@
 #!/usr/bin/python3
-
-"""This file defines the Amenity Model
-It inherits from the BaseModel
-"""
-
+""" State Module for HBNB project """
 from models.base_model import BaseModel
 
 
 class Amenity(BaseModel):
-    """The Amenity Model"""
-
-    # Attributes
-    name: str = ""
+    name = ""

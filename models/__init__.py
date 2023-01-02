@@ -1,10 +1,6 @@
 #!/usr/bin/python3
-
-"""
-Initializes Module Global Variables (Singleton)
-"""
-
-from .engine.file_storage import FileStorage
+"""This module instantiates an object of class FileStorage"""
+from models.engine.file_storage import FileStorage
 
 
 storage = FileStorage()
