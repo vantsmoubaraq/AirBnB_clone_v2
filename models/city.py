@@ -7,10 +7,14 @@ import models
 
 class City(BaseModel, Base):
     """ The city class, contains state ID and name """
-    if models.HBNB_TYPE_STORAGE == 'db':
+    if models.storage_type == 'db':
         __tablename__ = 'cities'
         name = Column(String(128), nullable=False)
         state_id = Column(String(60), ForeignKey('states.id'), nullable=False)
     else:
         state_id = ""
         name = ""
+
+    def __init__(self, *args, **kwargs):
+        """Initialises City"""
+        super().__init__(*args, **kwargs)

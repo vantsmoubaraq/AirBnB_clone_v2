@@ -10,7 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-
+import shlex
 
 def parse(args):
     """Convert a series of zero or more numbers to an argument tuple"""
@@ -99,7 +99,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_quit(self, command):
         """ Method to exit the HBNB console"""
-        exit()
+        exit(0)
 
     def help_quit(self):
         """ Prints the help documentation for quit  """
@@ -108,7 +108,7 @@ class HBNBCommand(cmd.Cmd):
     def do_EOF(self, arg):
         """ Handles EOF to exit program """
         print()
-        exit()
+        exit(0)
 
     def help_EOF(self):
         """ Prints the help documentation for EOF """
@@ -119,9 +119,8 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """Create an object of any class"""
         pline = parse(args)
-
         # Isolate the class_name
         class_name = pline[0]
         if len(pline) == 0:
@@ -133,7 +132,6 @@ class HBNBCommand(cmd.Cmd):
         new_instance = eval("{}()".format(class_name))
         # Isolate the Attribute_Values
         attr_and_value = pline[1:]
-
         for element in attr_and_value:
             key, value = element.split('=')
             value = value.replace('_', ' ')
@@ -172,7 +170,7 @@ class HBNBCommand(cmd.Cmd):
 
         key = c_name + "." + c_id
         try:
-            print(models.storage._FileStorage__objects[key])
+            print(models.storage.all()[key])
         except KeyError:
             print("** no instance found **")
 
@@ -216,21 +214,21 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
-        print_list = []
-
-        if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
-            for k, v in models.storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+        args = parse(args)
+        args = args[:]
+        obj_list = []
+        if len(args) == 0:
+            obj_dict = models.storage.all()
+        elif args[0] in HBNBCommand.classes:
+            obj_dict = models.storage.all(HBNBCommand.classes[args[0]])
         else:
-            for k, v in models.storage._FileStorage__objects.items():
-                print_list.append(str(v))
-
-        print(print_list)
+            print("** class doesn't exist **")
+            return False
+        for key in obj_dict:
+            obj_list.append(str(obj_dict[key]))
+        print("[", end="")
+        print(", ".join(obj_list), end="")
+        print("]")
 
     def help_all(self):
         """ Help information for the all command """
