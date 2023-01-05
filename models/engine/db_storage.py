@@ -2,7 +2,6 @@
 """
 Contains the Class DBStorage
 """
-import models
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from models.base_model import BaseModel, Base
