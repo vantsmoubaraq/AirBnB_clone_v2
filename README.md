@@ -23,7 +23,7 @@ This repository contains the initial stage of a student project to build a clone
 <br>
 <center> <h2>General Use</h2> </center>
 
-1. First clone this repository.
+1. First clone this repository...
 
 3. Once the repository is cloned locate the "console.py" file and run it as follows:
 ```
