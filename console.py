@@ -2,7 +2,7 @@
 """ Console Module """
 import cmd
 import sys
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 from models.__init__ import storage
 from models.user import User
 from models.place import Place
@@ -10,6 +10,8 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from datetime import datetime
+import shlex
 
 
 class HBNBCommand(cmd.Cmd):
@@ -113,23 +115,52 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
+
     def do_create(self, args):
-        """ Create an object of any class"""
+        """create an object of any class"""
         if not args:
-            print("** class name missing **")
+            print("** No arguments passed **")
             return
-        elif args not in HBNBCommand.classes:
+        entry = args.split()
+
+        if entry[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+
+        try:
+            k_args = {}
+
+            for item in entry[1:]:
+                result = item.split("=")
+
+                if '"' == result[1][0] and '"' == result[1][-1]:
+                    result[1] = shlex.split(result[1])[0].replace("_", " ")
+                else:
+                    try:
+                        if "." in result[1]:
+                            result[1] = float(result[1])
+                        else:
+                            result[1] = int(result[1])
+                    except TypeError:
+                        continue
+                k_args[result[0]] = result[1]
+
+            new_instance = HBNBCommand.classes[entry[0]](**k_args)
+
+            """
+            for key, value in k_args.items():
+                setattr(new_instance, key, value)
+            """
+            new_instance.save()
+            print(new_instance.id)
+
+        except Exception as exception:
+            print(exception)
 
     def help_create(self):
         """ Help information for the create method """
         print("Creates a class of any type")
-        print("[Usage]: create <className>\n")
+        print("[Usage]: create <className> <parameter1> <parameter2> ...\n")
 
     def do_show(self, args):
         """ Method to show an individual object """
@@ -183,11 +214,11 @@ class HBNBCommand(cmd.Cmd):
         if not c_id:
             print("** instance id missing **")
             return
-
         key = c_name + "." + c_id
 
         try:
             del(storage.all()[key])
+            storage.delete(storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -206,11 +237,11 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all(args).items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all(args).items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -262,7 +293,6 @@ class HBNBCommand(cmd.Cmd):
         if key not in storage.all():
             print("** no instance found **")
             return
-
         # first determine if kwargs or args
         if '{' in args[2] and '}' in args[2] and type(eval(args[2])) is dict:
             kwargs = eval(args[2])
@@ -320,5 +350,7 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
+
 if __name__ == "__main__":
+    """Not to be imported"""
     HBNBCommand().cmdloop()
