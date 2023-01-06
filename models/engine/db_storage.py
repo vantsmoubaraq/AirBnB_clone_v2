@@ -41,7 +41,7 @@ class DBStorage:
 
     def all(self, cls=None):
         """Retrieves all objects in Database queried based on class"""
-        """new_dict = {}
+        new_dict = {}
         if cls is None:
             for clus in classes.values():
                 objs = self.__session.query(clus).all()
@@ -53,14 +53,6 @@ class DBStorage:
             for obj in objs:
                 key = obj.__class__.__name__ + '.' + obj.id
                 new_dict.update({key: obj})
-        return new_dict"""
-        new_dict = {}
-        for clss in classes:
-            if cls is None or cls is classes[clss] or cls is clss:
-                objs = self.__session.query(classes[clss]).all()
-                for obj in objs:
-                    key = obj.__class__.__name__ + '.' + obj.id
-                    new_dict[key] = obj
         return new_dict
 
     def new(self, obj):
