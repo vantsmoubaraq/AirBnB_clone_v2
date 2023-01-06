@@ -43,10 +43,12 @@ class BaseModel:
 
     def __str__(self):
         """Returns a string representation of the instance"""
-        return '[{}] ({}) {}'.format(self.__class__.__name__, self.id, self.__dict__)
+        return '[{}] ({}) {}'.format(self.__class__.__name__,
+                                     self.id, self.__dict__)
 
     def save(self):
-        """Updates updated_at with current time when instance is changed"""
+        """Updates updated_at with current
+        time when instance is changed"""
         self.updated_at = datetime.now()
         models.storage.new(self)
         models.storage.save()
@@ -63,5 +65,6 @@ class BaseModel:
         return dictionary
 
     def delete(self):
-        """Delete current instance from storage <models.storage> by calling this"""
+        """Delete current instance from storage
+        <models.storage> by calling this"""
         models.storage.delete(self)

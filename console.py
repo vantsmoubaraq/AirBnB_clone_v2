@@ -10,7 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-import shlex
+
 
 def parse(args):
     """Convert a series of zero or more numbers to an argument tuple"""
@@ -135,8 +135,8 @@ class HBNBCommand(cmd.Cmd):
         for element in attr_and_value:
             key, value = element.split('=')
             value = value.replace('_', ' ')
-            if hasattr(new_instance, key):  # Checks if attribute is part of the object
-                setattr(new_instance, key, eval(value))  # Sets the value of the attribute
+            if hasattr(new_instance, key):
+                setattr(new_instance, key, eval(value))
         models.storage.new(new_instance)
         new_instance.save()
         print("{}".format(new_instance.id))
